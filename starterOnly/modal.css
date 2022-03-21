@@ -527,3 +527,16 @@ footer {
   }
 }
 
+.inputInvalid {
+  border-color: #fe142f;
+}
+
+.messageInvalid {
+  color: #fe142f;
+  font-size: 0.75rem;
+  display: none;
+}
+/* 
+.btn-submit:disabled {
+  background: #ccc;
+} */
