@@ -22,7 +22,11 @@ const numberTournament = document.getElementById("quantity");
 const radioContainer = document.getElementById("radioContainer");
 const inputRadio = document.querySelectorAll('input[name="location"]');
 const requiredCheckBox = document.getElementById('checkbox1');
+const Event = document.getElementById('checkbox2');
 const btnSubmit = document.querySelector(".btn-submit");
+const thanksModal = document.getElementById('thanksModal');
+const formContainer = document.getElementById("formContainer");
+const btnClose = document.querySelector('.btn-close');
 
 // Regex
 let regexName = /[a-zA-Z]/g;
@@ -35,11 +39,14 @@ modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
 
 // Gobal var
 let selectedCity;
+let nextEvent;
 
 // launch modal form
 function launchModal() {
   modalbg.style.display = "block";
   modalContent.style.display = "block";
+  formContainer.style.display = "block";
+  thanksModal.style.display = "none";
   loopButtonCity();
 }
 
@@ -153,6 +160,7 @@ radioContainer.addEventListener("change", () => {
   validButtonCity();
 });
 
+// Check if checkbox was checked
 requiredCheckBox.addEventListener("change", () => {
   if (!requiredCheckBox.checked) {
     messageInvalid[6].style.display = "block";
@@ -163,8 +171,50 @@ requiredCheckBox.addEventListener("change", () => {
   }
 })
 
+// Check value event
+Event.addEventListener("change", () => {
+  if (Event.checked) {
+    nextEvent = Event.value
+  } else {
+    nextEvent = Event.value
+  }
+})
+
 // Button Submit Form
 btnSubmit.addEventListener("click", () => {
   validButtonCity();
+  let name = inputName.value
+  let lastName = inputLastName.value
+  let email = inputEmail.value
+  let date = birthDate.value
+  let tournament = numberTournament.value
+  let condition = requiredCheckBox.value
+
+  checkItemsInLocalStorage("name", name);
+  checkItemsInLocalStorage("lastName", lastName);
+  checkItemsInLocalStorage("email", email);
+  checkItemsInLocalStorage("birthDate", date);
+  checkItemsInLocalStorage("tournament", tournament);
   checkItemsInLocalStorage("selectedCity", selectedCity);
+  checkItemsInLocalStorage("condition", condition);
+  checkItemsInLocalStorage("nextEvent", nextEvent);
 });
+
+// Stop the propagation who close the modal after submit
+function handleForm(event) {
+  event.preventDefault();
+}
+formContainer.addEventListener('submit', handleForm);
+
+// Show the thank's modal
+function showThanksModal() {
+  formContainer.style.display = "none";
+  thanksModal.style.display = "flex";
+}
+
+// Close thanksModal
+btnClose.addEventListener('click', () => {
+  modalContent.style.display = "none";
+  modalbg.style.display = "none";
+  thanksModal.style.display = "none";
+})
