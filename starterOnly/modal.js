@@ -29,9 +29,9 @@ const formContainer = document.getElementById("formContainer");
 const btnClose = document.querySelector('.btn-close');
 
 // Regex
-let regexName = /[a-zA-Z]/g;
-let regexEmail =
-  /^[a-z0-9!#$ %& '*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&' * +/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/g;
+let regexName = /^[a-zA-Z_.+-]*(?:[a-zA-Z][a-zA-Z_.+-]*){2,}$/g;
+let regexLastName = /^[a-zA-Z_.+-]*(?:[a-zA-Z][a-zA-Z_.+-]*){2,}$/g;
+let regexEmail = /^[a-z0-9!#$ %& '*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&' * +/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/g;
 let regexDate = /\d{4}-\d{2}-\d{2}/;
 
 // launch modal event
@@ -59,6 +59,10 @@ closeModal.addEventListener("click", () => {
 // Test valid name
 function validName(name) {
   return regexName.test(name);
+}
+// Test valid Lastname
+function validLastName(lastName) {
+  return regexLastName.test(lastName);
 }
 // Test valid email
 function validEmail(email) {
@@ -107,17 +111,19 @@ inputName.addEventListener("change", () => {
   } else {
     inputName.classList.add("inputInvalid");
     messageInvalid[0].style.display = "block";
+    inputName.value = "";
   }
 });
 
-// Check valid name input
+// Check valid Lastname input
 inputLastName.addEventListener("change", () => {
-  if (validName(inputLastName.value) == true) {
+  if (validLastName(inputLastName.value) == true) {
     inputLastName.classList.remove("inputInvalid");
     messageInvalid[1].style.display = "none";
   } else {
     inputLastName.classList.add("inputInvalid");
     messageInvalid[1].style.display = "block";
+    inputLastName.value = "";
   }
 });
 
