@@ -149,6 +149,11 @@ birthDate.addEventListener("change", () => {
   }
 });
 
+// Ignore all characters on input number
+numberTournament.addEventListener('keydown', (e) => {
+  e.preventDefault();
+})
+
 // Check valid tournament input
 numberTournament.addEventListener("change", () => {
   if (numberTournament.value >= 0) {
