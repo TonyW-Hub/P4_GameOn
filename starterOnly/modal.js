@@ -14,32 +14,50 @@ const formData = document.querySelectorAll(".formData");
 const modalContent = document.querySelector(".content");
 const closeModal = document.querySelector(".close");
 const inputName = document.querySelector("#first");
-const inputLastName = document.querySelector("#last");
+const inputLastName = document.getElementById("last");
 const inputEmail = document.querySelector("#email");
 const messageInvalid = document.querySelectorAll(".messageInvalid");
 const birthDate = document.getElementById("birthdate");
 const numberTournament = document.getElementById("quantity");
 const radioContainer = document.getElementById("radioContainer");
 const inputRadio = document.querySelectorAll('input[name="location"]');
-const requiredCheckBox = document.getElementById('checkbox1');
-const Event = document.getElementById('checkbox2');
-const btnSubmit = document.querySelector(".btn-submit");
-const thanksModal = document.getElementById('thanksModal');
+const requiredCheckBox = document.getElementById("checkbox1");
+const Event = document.getElementById("checkbox2");
+const thanksModal = document.getElementById("thanksModal");
 const formContainer = document.getElementById("formContainer");
-const btnClose = document.querySelector('.btn-close');
-
-// Regex
-let regexName = /^[a-zA-Z_.+-]*(?:[a-zA-Z][a-zA-Z_.+-]*){2,}$/g;
-let regexLastName = /^[a-zA-Z_.+-]*(?:[a-zA-Z][a-zA-Z_.+-]*){2,}$/g;
-let regexEmail = /^[a-z0-9!#$ %& '*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&' * +/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/g;
-let regexDate = /\d{4}-\d{2}-\d{2}/;
-
-// launch modal event
-modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
+const btnClose = document.querySelector(".btn-close");
 
 // Gobal var
 let selectedCity;
 let nextEvent;
+let fullChecked = 0;
+let error = 0;
+
+// Regex
+// Test valid name and last name
+function regexNameAndLastName(value) {
+  const regex = /^[a-zA-Z_.+-]*(?:[a-zA-Z][a-zA-Z_.+-]*){2,}$/g;
+  return regex.test(value);
+}
+// Test valid email
+function regexEmail(value) {
+  const regex =
+    /^([a-z0-9]+(?:[._-][a-z0-9]+)*)@([a-z0-9]+(?:[.-][a-z0-9]+)*\.[a-z]{2,})$/gm;
+  return regex.test(value);
+}
+// Test valid birthdate
+function regexDate(value) {
+  const regex = /\d{4}-\d{2}-\d{2}/;
+  return regex.test(value);
+}
+// Test valid number
+function regexNumber(value) {
+  const regex = /^[0-9]{0,2}$/;
+  return regex.test(value);
+}
+
+// launch modal event
+modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
 
 // launch modal form
 function launchModal() {
@@ -47,7 +65,7 @@ function launchModal() {
   modalContent.style.display = "block";
   formContainer.style.display = "block";
   thanksModal.style.display = "none";
-  loopButtonCity();
+  error = 0;
 }
 
 // Close modal form
@@ -56,166 +74,155 @@ closeModal.addEventListener("click", () => {
   modalbg.style.display = "none";
 });
 
-// Test valid name
-function validName(name) {
-  return regexName.test(name);
-}
-// Test valid Lastname
-function validLastName(lastName) {
-  return regexLastName.test(lastName);
-}
-// Test valid email
-function validEmail(email) {
-  return regexEmail.test(email);
-}
-// Test valid birthdate
-function validDate(date) {
-  return regexDate.test(date);
-}
-
 // Check if value was stock in local storage
 function checkItemsInLocalStorage(key, value) {
-  if (localStorage.getItem(key, value) === null) {
+  if (localStorage.getItem(key) === null) {
     localStorage.setItem(key, value);
   } else {
-    localStorage.removeItem(key, value);
+    localStorage.removeItem(key);
     localStorage.setItem(key, value);
   }
 }
 
 // Loop on all radio button
-function loopButtonCity() {
+function ButtonCity() {
+  fullChecked = 0;
   for (const radioButton of inputRadio) {
     if (radioButton.checked) {
+      fullChecked++;
       selectedCity = radioButton.value;
     }
   }
-}
-
-// Check validity radio button
-function validButtonCity() {
-  if (selectedCity == undefined || '') {
-    messageInvalid[5].style.display = "block";
-    btnSubmit.disabled = true;
-  } else {
+  if (fullChecked === 1) {
     messageInvalid[5].style.display = "none";
-    btnSubmit.disabled = false;
+  } else {
+    messageInvalid[5].style.display = "block";
+    error++;
   }
 }
 
 // Check valid name input
-inputName.addEventListener("change", () => {
-  if (validName(inputName.value) == true) {
+function Name() {
+  let name = inputName.value;
+  if (regexNameAndLastName(name) === true) {
     inputName.classList.remove("inputInvalid");
     messageInvalid[0].style.display = "none";
   } else {
     inputName.classList.add("inputInvalid");
     messageInvalid[0].style.display = "block";
-    inputName.value = "";
+    error++;
   }
-});
+}
 
 // Check valid Lastname input
-inputLastName.addEventListener("change", () => {
-  if (validLastName(inputLastName.value) == true) {
+function LastName() {
+  let lastName = inputLastName.value;
+  if (regexNameAndLastName(lastName) === true) {
     inputLastName.classList.remove("inputInvalid");
     messageInvalid[1].style.display = "none";
   } else {
     inputLastName.classList.add("inputInvalid");
     messageInvalid[1].style.display = "block";
-    inputLastName.value = "";
+    error++;
   }
-});
+}
 
 // Check valid email input
-inputEmail.addEventListener("change", () => {
-  if (validEmail(inputEmail.value) == true) {
+function Email() {
+  let email = inputEmail.value;
+  if (regexEmail(email) === true) {
     inputEmail.classList.remove("inputInvalid");
     messageInvalid[2].style.display = "none";
   } else {
     inputEmail.classList.add("inputInvalid");
     messageInvalid[2].style.display = "block";
+    error++;
   }
-});
+}
 
 // Check valid date input
-birthDate.addEventListener("change", () => {
-  if (validDate(birthDate.value) == true) {
+function BirthDate() {
+  let date = birthDate.value;
+  if (regexDate(date) === true) {
     birthDate.classList.remove("inputInvalid");
     messageInvalid[3].style.display = "none";
   } else {
     birthDate.classList.add("inputInvalid");
     messageInvalid[3].style.display = "block";
+    error++;
   }
-});
-
-// Ignore all characters on input number
-numberTournament.addEventListener('keydown', (e) => {
-  e.preventDefault();
-})
+}
 
 // Check valid tournament input
-numberTournament.addEventListener("change", () => {
-  if (numberTournament.value >= 0) {
+function Tournamanent() {
+  let number = numberTournament.value;
+  if (regexNumber(number) === true) {
     numberTournament.classList.remove("inputInvalid");
     messageInvalid[4].style.display = "none";
   } else {
     numberTournament.classList.add("inputInvalid");
     messageInvalid[4].style.display = "block";
+    error++;
   }
-});
-
-// Check valid input city
-radioContainer.addEventListener("change", () => {
-  loopButtonCity();
-  validButtonCity();
-});
+}
 
 // Check if checkbox was checked
-requiredCheckBox.addEventListener("change", () => {
+function RequiredCheckBox() {
   if (!requiredCheckBox.checked) {
     messageInvalid[6].style.display = "block";
-    btnSubmit.disabled = true
+    error++;
   } else {
     messageInvalid[6].style.display = "none";
-    btnSubmit.disabled = false
   }
-})
+}
 
 // Check value event
-Event.addEventListener("change", () => {
+function CheckBoxBonus() {
   if (Event.checked) {
-    nextEvent = Event.value
+    nextEvent = Event.value;
   } else {
-    nextEvent = Event.value
+    nextEvent = Event.value;
   }
-})
+}
 
-// Button Submit Form
-btnSubmit.addEventListener("click", () => {
-  validButtonCity();
-  let name = inputName.value
-  let lastName = inputLastName.value
-  let email = inputEmail.value
-  let date = birthDate.value
-  let tournament = numberTournament.value
-  let condition = requiredCheckBox.value
+// Function to Submit Form
+function submitForm() {
+  error = 0;
+  Name();
+  LastName();
+  Email();
+  BirthDate();
+  Tournamanent();
+  ButtonCity();
+  RequiredCheckBox();
+  CheckBoxBonus();
 
-  checkItemsInLocalStorage("name", name);
-  checkItemsInLocalStorage("lastName", lastName);
-  checkItemsInLocalStorage("email", email);
-  checkItemsInLocalStorage("birthDate", date);
-  checkItemsInLocalStorage("tournament", tournament);
-  checkItemsInLocalStorage("selectedCity", selectedCity);
-  checkItemsInLocalStorage("condition", condition);
-  checkItemsInLocalStorage("nextEvent", nextEvent);
-});
+  // Check error on all input
+  if (error === 0) {
+    let name = inputName.value;
+    let lastName = inputLastName.value;
+    let email = inputEmail.value;
+    let date = birthDate.value;
+    let tournament = numberTournament.value;
+    let condition = requiredCheckBox.value;
+
+    checkItemsInLocalStorage("name", name);
+    checkItemsInLocalStorage("lastName", lastName);
+    checkItemsInLocalStorage("email", email);
+    checkItemsInLocalStorage("birthDate", date);
+    checkItemsInLocalStorage("tournament", tournament);
+    checkItemsInLocalStorage("selectedCity", selectedCity);
+    checkItemsInLocalStorage("condition", condition);
+    checkItemsInLocalStorage("nextEvent", nextEvent);
+    showThanksModal();
+  }
+}
 
 // Stop the propagation who close the modal after submit
 function handleForm(event) {
   event.preventDefault();
 }
-formContainer.addEventListener('submit', handleForm);
+formContainer.addEventListener("submit", handleForm);
 
 // Show the thank's modal
 function showThanksModal() {
@@ -224,8 +231,8 @@ function showThanksModal() {
 }
 
 // Close thanksModal
-btnClose.addEventListener('click', () => {
+btnClose.addEventListener("click", () => {
   modalContent.style.display = "none";
   modalbg.style.display = "none";
   thanksModal.style.display = "none";
-})
+});
